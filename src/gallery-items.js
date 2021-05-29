@@ -1,4 +1,4 @@
-export default [
+const exportImages = [
   {
     preview:
       'https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825__340.jpg',
@@ -63,3 +63,60 @@ export default [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const imagesList = document.querySelector('.js-gallery');
+imagesList.classList.add('gallery')
+console.log(imagesList)
+
+const resultImages = exportImages.map((image) => {
+  return `<li class="gallery__item">
+  <a class="gallery__link" href="${image.original}">
+  <img class="gallery__image" src="${image.preview}"
+  alt="${image.description}"
+  data-source="${image.original}"   
+      /></a></li>`;
+});
+console.log(resultImages)
+
+imagesList.insertAdjacentHTML("afterbegin", resultImages.join(""));
+
+const images = document.querySelector(".gallery");
+const modalOpen = document.querySelector(".lightbox");
+const modalClose = document.querySelector(".lightbox__button");
+const overlay = document.querySelector(".lightbox__overlay");
+
+function galleryList(event) {
+  if (!event.target.classList.contains("gallery__image")) {
+    return;
+  }
+  event.preventDefault();
+  openModal(event.target.getAttribute("data-source"));
+}
+images.addEventListener("click", galleryList);
+
+function openModal(dataSource) {
+  images.addEventListener("keydown", onEscapePress);
+  modalOpen.classList.add("is-open");
+  document.querySelector(".lightbox__image").src = dataSource;
+}
+
+function modalCloseBtn() {
+  images.removeEventListener("keydown", onEscapePress);
+  modalOpen.classList.remove("is-open");
+  document.querySelector(".lightbox__image").src = "";
+}
+modalClose.addEventListener("click", modalCloseBtn);
+
+function overlayClickingCLosesModal(event) {
+  if (event.currentTarget === event.target) {
+    modalCloseBtn();
+  }
+}
+overlay.addEventListener("click", overlayClickingCLosesModal);
+
+function onEscapePress(event) {
+  const ESC_CODE = "Escape";
+  if (event.code === ESC_CODE) {
+    modalCloseBtn();
+  }
+}
